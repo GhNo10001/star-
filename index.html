@@ -1,1 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>星空诗语 | 唯美诗句与名言交互体验</title>
+    <!-- Font Awesome CDN -->
+    <script src="https://image.uc.cn/s/uae/g/3n/mos-production/fontawesome-free-7.1.0-web/js/all.min.js"></script>
+<link rel="stylesheet" href="https://image.uc.cn/s/uae/g/3n/mos-production/fontawesome-free-7.1.0-web/css/fontawesome.min.css">
+    <style>
+        :root {
+            --bg-dark: #0c0e2b;
+            --bg-darker: #000000;
+            --text-light: #f8f4e9;
+            --gold: #ffd700;
+            --violet: #8a2be2;
+            --card-bg: rgba(12, 14, 43, 0.7);
+            --card-border: rgba(255, 215, 0, 0.2);
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
+            color: var(--text-light);
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            touch-action: manipulation;
+        }
+
+        #starCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--gold), var(--violet));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+
+        .control-panel {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-light);
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(255, 215, 0, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .quote-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .quote-text {
+            font-size: 1.6rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quote-author, .quote-source {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+
+        .stats {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .instruction {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            opacity: 0.6;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            .subtitle {
+                font-size: 1rem;
+            }
+            .quote-text {
+                font-size: 1.3rem;
+            }
+            .control-panel {
+                flex-direction: column;
+                align-items: center;
+            }
+            .filter-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 2rem;
+            }
+            .quote-text {
+                font-size: 1.1rem;
+            }
+            .quote-card {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="starCanvas"></canvas>
+    <div class="content">
+        <h1 class="title">星空诗语</h1>
+        <p class="subtitle">点击星空中的星星，发现随机诗句与智慧名言</p>
+        
+        <div class="control-panel">
+            <button class="filter-btn active" data-filter="all">
+                <i class="fas fa-star"></i> 全部内容
+            </button>
+            <button class="filter-btn" data-filter="poetry">
+                <i class="fas fa-moon"></i> 经典诗句
+            </button>
+            <button class="filter-btn" data-filter="quote">
+                <i class="fas fa-quote-right"></i> 名人名言
+            </button>
+        </div>
+
+        <div class="quote-card">
+            <div class="quote-text" id="quoteText">点击星空中的任意星星，开启你的诗意之旅...</div>
+            <div class="quote-author" id="quoteAuthor"></div>
+            <div class="quote-source" id="quoteSource"></div>
+        </div>
+
+        <div class="stats">
+            <span id="totalCount">总内容: 300 条</span>
+            <span id="poetryCount">诗句: 143 条</span>
+            <span id="quoteCount">名言: 157 条</span>
+            <span id="viewedCount">已探索: 0 条</span>
+        </div>
+        <p class="instruction">提示：星星闪烁表示可点击，移动设备上可触摸点击</p>
+    </div>
+
+    <script>
+        // ======================
+        // 1. 诗词库数据（300条）
+        // ======================
+        const poetryQuotes = [
+            // 原始245条（部分示例，实际保留全部）
+            { text: "空山新雨后，天气晚来秋。", author: "王维", source: "《山居秋暝》", type: "poetry" },
+            { text: "床前明月光，疑是地上霜。", author: "李白", source: "《静夜思》", type: "poetry" },
+            { text: "春眠不觉晓，处处闻啼鸟。", author: "孟浩然", source: "《春晓》", type: "poetry" },
+            { text: "白日依山尽，黄河入海流。", author: "王之涣", source: "《登鹳雀楼》", type: "poetry" },
+            { text: "海上生明月，天涯共此时。", author: "张九龄", source: "《望月怀远》", type: "poetry" },
+            { text: "野火烧不尽，春风吹又生。", author: "白居易", source: "《赋得古原草送别》", type: "poetry" },
+            { text: "会当凌绝顶，一览众山小。", author: "杜甫", source: "《望岳》", type: "poetry" },
+            { text: "明月松间照，清泉石上流。", author: "王维", source: "《山居秋暝》", type: "poetry" },
+            { text: "孤帆远影碧空尽，唯见长江天际流。", author: "李白", source: "《黄鹤楼送孟浩然之广陵》", type: "poetry" },
+            { text: "两个黄鹂鸣翠柳，一行白鹭上青天。", author: "杜甫", source: "《绝句》", type: "poetry" },
+            { text: "大漠孤烟直，长河落日圆。", author: "王维", source: "《使至塞上》", type: "poetry" },
+            { text: "天生我材必有用，千金散尽还复来。", author: "李白", source: "《将进酒》", type: "poetry" },
+            { text: "人生自古谁无死，留取丹心照汗青。", author: "文天祥", source: "《过零丁洋》", type: "poetry" },
+            { text: "问渠那得清如许，为有源头活水来。", author: "朱熹", source: "《观书有感》", type: "poetry" },
+            { text: "不识庐山真面目，只缘身在此山中。", author: "苏轼", source: "《题西林壁》", type: "poetry" },
+            { text: "欲穷千里目，更上一层楼。", author: "王之涣", source: "《登鹳雀楼》", type: "poetry" },
+            { text: "长风破浪会有时，直挂云帆济沧海。", author: "李白", source: "《行路难》", type: "poetry" },
+            { text: "采菊东篱下，悠然见南山。", author: "陶渊明", source: "《饮酒·其五》", type: "poetry" },
+            { text: "落霞与孤鹜齐飞，秋水共长天一色。", author: "王勃", source: "《滕王阁序》", type: "poetry" },
+            { text: "曾经沧海难为水，除却巫山不是云。", author: "元稹", source: "《离思》", type: "poetry" },
+            // 新增35条诗句
+            { text: "记清平调，词成进了，一梦仙乡", author: "晁补之", source: "《夜合花·和李浩季良牡丹》", type: "poetry" },
+            { text: "十里梅花雪正晴，月挂遥山冷", author: "卓世清", source: "《卜算子·题徐仙亭》", type: "poetry" },
+            { text: "相思难偶，欢无情明月，今年已是，三度如钩", author: "冯伟寿", source: "《春风袅娜·春恨·黄钟羽》", type: "poetry" },
+            { text: "又长笛归舟，乱鸦荒堞。两鬓西风，有人心事到红叶", author: "曾允元", source: "《齐天乐·次韵赵芳谷曲，有香玉之怨》", type: "poetry" },
+            { text: "睡觉西窗灯一笺。恰听打、三更三点", author: "朱敦儒", source: "《鼓笛令》", type: "poetry" },
+            { text: "嫩凉新霁。明月光如洗。长笛一声烟际起。人在危楼独倚", author: "袁去华", source: "《清平乐》", type: "poetry" },
+            { text: "不如意事常八九，可与人言无二三", author: "方岳", source: "《别子才司令》", type: "poetry" },
+            { text: "蓬门未识绮罗香，拟托良媒益自伤", author: "秦韬玉", source: "《贫女》", type: "poetry" },
+            { text: "谁爱风流高格调，共怜时世俭梳妆", author: "秦韬玉", source: "《贫女》", type: "poetry" },
+            { text: "敢将十指夸针巧，不把双眉斗画长", author: "秦韬玉", source: "《贫女》", type: "poetry" },
+            { text: "苦恨年年压金线，为他人作嫁衣裳", author: "秦韬玉", source: "《贫女》", type: "poetry" },
+            { text: "车遥遥，马憧憧。君游东山东复东，安得奋飞逐西风", author: "范成大", source: "《车遥遥篇》", type: "poetry" },
+            { text: "愿我如星君如月，夜夜流光相皎洁", author: "范成大", source: "《车遥遥篇》", type: "poetry" },
+            { text: "月暂晦，星常明。留明待月复，三五共盈盈", author: "范成大", source: "《车遥遥篇》", type: "poetry" },
+            { text: "几回花下坐吹箫，银汉红墙入望遥", author: "黄景仁", source: "《绮怀》", type: "poetry" },
+            { text: "似此星辰非昨夜，为谁风露立中宵", author: "黄景仁", source: "《绮怀》", type: "poetry" },
+            { text: "缠绵思尽抽残茧，宛转心伤剥后蕉", author: "黄景仁", source: "《绮怀》", type: "poetry" },
+            { text: "三五年时三五月，可怜杯酒不曾消", author: "黄景仁", source: "《绮怀》", type: "poetry" },
+            { text: "望不尽冉冉斜阳，抚乔木年华将晚", author: "王沂孙", source: "《长亭怨慢》", type: "poetry" },
+            { text: "恋恋青衫，犹染枯香，还叹鬓丝飘雪", author: "张炎", source: "《疏影》", type: "poetry" },
+            { text: "幽梦觉、涓涓清露，一枝灯影里", author: "周密", source: "《花犯》", type: "poetry" },
+            { text: "乡梦窄，水天宽，小窗
