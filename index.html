@@ -29,7 +29,6 @@
                     <span class="btn-shine"></span>
                 </button>
             </div>
-            <div class="stars-preview"></div>
         </div>
     </section>
 
@@ -42,32 +41,67 @@
         <div class="hud-container">
             <div class="hud-top">
                 <div class="hud-line left"></div>
-                <div class="hud-title">星际诗歌系统</div>
+                <div class="hud-title">星际诗歌系统 V2.0</div>
                 <div class="hud-line right"></div>
             </div>
             
-            <!-- 诗句显示框（初始隐藏） -->
-            <div id="poem-modal" class="poem-hud hidden">
-                <div class="hud-corner tl"></div>
-                <div class="hud-corner tr"></div>
-                <div class="hud-corner bl"></div>
-                <div class="hud-corner br"></div>
-                
-                <div class="scan-line"></div>
-                <div class="poem-content">
-                    <div class="text-scramble" id="poem-text"></div>
-                    <div class="poem-meta">
-                        <span class="author" id="poem-author"></span>
-                        <span class="title" id="poem-title"></span>
-                    </div>
+            <!-- 中央瞄准系统 -->
+            <div class="targeting-system">
+                <div class="targeting-reticle" id="lockButton">
+                    <!-- 外环旋转 -->
+                    <div class="ring outer"></div>
+                    <!-- 中环 -->
+                    <div class="ring middle"></div>
+                    <!-- 内环 -->
+                    <div class="ring inner"></div>
+                    <!-- 十字准星 -->
+                    <div class="crosshair horizontal"></div>
+                    <div class="crosshair vertical"></div>
+                    <!-- 中心点 -->
+                    <div class="center-dot"></div>
+                    <!-- 扫描线 -->
+                    <div class="scan-beam"></div>
+                    <!-- 提示文字 -->
+                    <div class="lock-text">点击锁定</div>
                 </div>
-                <button class="close-hud" onclick="closePoem()">×</button>
+                <div class="scanning-overlay hidden" id="scanOverlay">
+                    <div class="scan-line-h"></div>
+                    <div class="scan-line-v"></div>
+                    <div class="lock-status">正在扫描...</div>
+                </div>
             </div>
 
-            <div class="hud-bottom">
+            <!-- 底部诗句显示面板（初始隐藏） -->
+            <div id="poem-panel" class="poem-panel hidden">
+                <div class="panel-header">
+                    <span class="data-label">DATA STREAM</span>
+                    <span class="timestamp" id="timestamp">2026.01.30</span>
+                </div>
+                <div class="panel-content">
+                    <div class="text-scramble" id="poem-text"></div>
+                    <div class="poem-meta">
+                        <span class="meta-item">
+                            <span class="label">AUTHOR:</span>
+                            <span class="value" id="poem-author"></span>
+                        </span>
+                        <span class="meta-item">
+                            <span class="label">SOURCE:</span>
+                            <span class="value" id="poem-title"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="hud-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <button class="dismiss-btn" onclick="App.closePoem()">关闭 [ESC]</button>
+                </div>
+            </div>
+
+            <div class="hud-bottom-hint">
                 <p class="hint-text">
                     <span class="blink">◈</span> 
-                    点击闪烁的恒星解锁诗歌与名言 
+                    瞄准恒星并点击中央锁定器解锁诗歌数据 
                     <span class="blink">◈</span>
                 </p>
             </div>
