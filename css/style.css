@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;700&family=Orbitron:wght@400;700&display=swap');
+
+:root {
+    --primary-color: #00f0ff;
+    --secondary-color: #ff00a0;
+    --accent-color: #ffd700;
+    --bg-dark: #000510;
+    --bg-space: #001122;
+    --text-glow: 0 0 10px rgba(0, 240, 255, 0.8);
+    --box-glow: 0 0 20px rgba(0, 240, 255, 0.3);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Serif SC', serif;
+    background: var(--bg-dark);
+    color: #fff;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* 页面切换系统 */
+.page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease, visibility 1s;
+    z-index: 1;
+}
+
+.page.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 10;
+}
+
+/* 加载器 */
+.loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s;
+}
+
+.loader.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.warp-core {
+    width: 100px;
+    height: 100px;
+    border: 3px solid transparent;
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    box-shadow: 0 0 20px var(--primary-color);
+}
+
+.loading-text {
+    margin-top: 20px;
+    font-family: 'Orbitron', sans-serif;
+    color: var(--primary-color);
+    letter-spacing: 3px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+}
+
+/* Glitch效果标题 */
+.glitch {
+    font-size: 5rem;
+    font-weight: 700;
+    text-align: center;
+    position: relative;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    font-family: 'Noto Serif SC', serif;
+    letter-spacing: 0.5rem;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.glitch::before {
+    left: 2px;
+    text-shadow: -2px 0 var(--secondary-color);
+    clip: rect(24px, 550px, 90px, 0);
+    animation: glitch-anim 3s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+    left: -2px;
+    text-shadow: -2px 0 var(--primary-color);
+    clip: rect(85px, 550px, 140px, 0);
+    animation: glitch-anim2 2.5s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+    0% { clip: rect(10px, 9999px, 85px, 0); }
+    20% { clip: rect(63px, 9999px, 130px, 0); }
+    40% { clip: rect(25px, 9999px, 15px, 0); }
+    60% { clip: rect(88px, 9999px, 95px, 0); }
+    80% { clip: rect(43px, 9999px, 60px, 0); }
+    100% { clip: rect(15px, 9999px, 120px, 0); }
+}
+
+@keyframes glitch-anim2 {
+    0% { clip: rect(65px, 9999px, 100px, 0); }
+    20% { clip: rect(20px, 9999px, 35px, 0); }
+    40% { clip: rect(90px, 9999px, 110px, 0); }
+    60% { clip: rect(40px, 9999px, 70px, 0); }
+    80% { clip: rect(10px, 9999px, 50px, 0); }
+    100% { clip: rect(75px, 9999px, 95px, 0); }
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .glitch { font-size: 3rem; }
+    .subtitle { font-size: 1rem; }
+}
