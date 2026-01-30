@@ -3,32 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>星空时计 | Star Clock</title>
+    <title>星际航行 | Star Voyage</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;500;700&family=Noto+Sans+SC:wght@300;400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff00ff;
+            --neon-gold: #ffd700;
+            --glass-bg: rgba(0, 5, 16, 0.15);
+            --glass-border: rgba(0, 243, 255, 0.15);
+            --font-mono: 'Share Tech Mono', 'Courier New', monospace;
+            --font-tech: 'Orbitron', 'Exo 2', sans-serif;
+            --font-cn: 'Noto Sans SC', sans-serif;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --primary: #00f0ff;
-            --secondary: #ff00a0;
-            --bg: #000510;
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
-            background: radial-gradient(ellipse at bottom, #0d1b2a 0%, #000000 100%);
+            font-family: var(--font-cn);
+            background: #000;
             color: #fff;
             overflow: hidden;
             height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            position: relative;
         }
 
         /* 星空画布 */
@@ -41,232 +44,330 @@
             z-index: 0;
         }
 
-        /* 主容器 */
+        /* 超空间扭曲效果 */
+        .warp-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%);
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        /* 主容器 - 极简透明 */
         .container {
             position: relative;
             z-index: 10;
-            width: 90%;
-            max-width: 600px;
-            text-align: center;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
-        /* 玻璃态卡片 */
+        /* 玻璃面板 - 几乎全透明，仅边框发光 */
         .glass-panel {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 40px 50px;
             box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.3),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+                0 0 0 1px rgba(0, 243, 255, 0.05),
+                0 20px 50px rgba(0, 0, 0, 0.5),
+                inset 0 0 80px rgba(0, 243, 255, 0.02);
+            position: relative;
+            overflow: hidden;
+            max-width: 700px;
+            width: 100%;
         }
 
-        /* 模式切换标签 */
+        /* 角落发光装饰 */
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, transparent, var(--neon-cyan), transparent);
+            border-radius: 30px;
+            opacity: 0.3;
+            z-index: -1;
+            filter: blur(10px);
+        }
+
+        /* 顶部装饰线 */
+        .panel-accent {
+            position: absolute;
+            top: 0;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+            opacity: 0.6;
+        }
+
+        /* 模式切换 - 悬浮标签 */
         .tabs {
             display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
+            gap: 15px;
+            margin-bottom: 40px;
             justify-content: center;
+            position: relative;
         }
 
         .tab {
-            padding: 8px 20px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid transparent;
+            padding: 10px 25px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-family: var(--font-tech);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
             transition: all 0.3s;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .tab:hover::before {
+            left: 100%;
         }
 
         .tab.active {
-            background: rgba(0, 240, 255, 0.1);
-            border-color: var(--primary);
-            color: var(--primary);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3), inset 0 0 10px rgba(0, 243, 255, 0.1);
+            text-shadow: 0 0 10px var(--neon-cyan);
         }
 
-        .tab:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-        }
-
-        /* 主显示屏 */
+        /* 时间显示 - 使用科技等宽字体 */
         .display {
-            font-variant-numeric: tabular-nums;
-            margin: 20px 0;
+            margin: 30px 0;
+            position: relative;
         }
 
         .time-main {
-            font-size: 5rem;
-            font-weight: 200;
-            letter-spacing: -2px;
-            background: linear-gradient(to bottom, #fff, rgba(255,255,255,0.7));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-family: var(--font-mono);
+            font-size: 6rem;
+            font-weight: 400;
+            letter-spacing: 8px;
+            color: #fff;
+            text-shadow: 
+                0 0 20px rgba(255, 255, 255, 0.8),
+                0 0 40px var(--neon-cyan),
+                0 0 80px rgba(0, 243, 255, 0.5);
             line-height: 1;
-            margin-bottom: 10px;
-            font-family: 'Courier New', monospace;
-            text-shadow: 0 0 30px rgba(255,255,255,0.3);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        /* 时间分隔符闪烁 */
+        .time-main .colon {
+            animation: blink 1s infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
         }
 
         .time-sub {
-            font-size: 1.5rem;
-            color: var(--primary);
-            font-weight: 300;
+            font-family: var(--font-tech);
+            font-size: 1.2rem;
             letter-spacing: 4px;
+            color: var(--neon-gold);
+            text-transform: uppercase;
+            opacity: 0.9;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
         }
 
-        /* 日期信息栏 */
-        .info-bar {
+        /* 信息网格 - 极简线条风格 */
+        .info-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 30px;
+            gap: 30px;
+            margin-top: 40px;
             padding-top: 30px;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .info-grid::before {
+            content: '◆';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--neon-cyan);
+            font-size: 0.5rem;
+            opacity: 0.5;
         }
 
         .info-item {
             text-align: center;
+            position: relative;
+        }
+
+        .info-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 30px;
+            width: 1px;
+            background: linear-gradient(180deg, transparent, rgba(255,255,255,0.2), transparent);
         }
 
         .info-label {
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.4);
+            font-family: var(--font-tech);
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.4);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .info-value {
-            font-size: 1.1rem;
-            color: rgba(255,255,255,0.9);
-            font-weight: 500;
+            font-family: var(--font-cn);
+            font-size: 1.3rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.95);
+            letter-spacing: 1px;
         }
 
         .zodiac {
-            color: #ffd700;
+            color: var(--neon-gold);
+            font-weight: 500;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
         }
 
-        /* 控制按钮区 */
-        .controls {
-            margin-top: 30px;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
+        .weekday {
+            color: var(--neon-pink);
+            text-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
         }
 
-        .btn {
-            padding: 12px 24px;
-            border: 1px solid var(--border);
-            background: rgba(255,255,255,0.03);
-            color: #fff;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-            min-width: 80px;
-        }
-
-        .btn:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
-        }
-
-        .btn.primary {
-            background: rgba(0, 240, 255, 0.1);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .btn.primary:hover {
-            background: rgba(0, 240, 255, 0.2);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-        }
-
-        .btn.danger {
-            background: rgba(255, 0, 160, 0.1);
-            border-color: var(--secondary);
-            color: var(--secondary);
-        }
-
-        /* 倒计时输入 */
+        /* 输入框 - 透明科技风 */
         .input-group {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             justify-content: center;
-            margin: 20px 0;
+            margin: 30px 0;
             align-items: center;
         }
 
         .time-input {
-            width: 70px;
-            padding: 10px;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            width: 80px;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
             color: #fff;
             text-align: center;
-            font-size: 1.2rem;
+            font-family: var(--font-mono);
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            transition: all 0.3s;
         }
 
         .time-input:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+            background: rgba(0, 0, 0, 0.5);
         }
 
-        /* 秒表计次列表 */
-        .laps {
-            max-height: 150px;
-            overflow-y: auto;
-            margin-top: 20px;
-            text-align: left;
-            font-family: monospace;
-            font-size: 0.9rem;
+        .input-separator {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.3);
         }
 
-        .lap-item {
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            color: rgba(255,255,255,0.7);
+        /* 按钮 - 霓虹光效 */
+        .btn {
+            padding: 12px 30px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: var(--font-tech);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            margin: 0 5px;
         }
 
-        .lap-item:last-child {
-            border-bottom: none;
+        .btn:hover {
+            background: rgba(0, 243, 255, 0.1);
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
+            transform: translateY(-2px);
         }
 
-        /* 进度环（倒计时用） */
+        .btn.primary {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            background: rgba(0, 243, 255, 0.05);
+        }
+
+        .btn.danger {
+            border-color: var(--neon-pink);
+            color: var(--neon-pink);
+            background: rgba(255, 0, 255, 0.05);
+        }
+
+        .btn.danger:hover {
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
+        }
+
+        /* 进度环 */
         .progress-ring {
             position: relative;
-            width: 200px;
-            height: 200px;
-            margin: 0 auto 20px;
+            width: 220px;
+            height: 220px;
+            margin: 20px auto;
         }
 
         .progress-ring svg {
             transform: rotate(-90deg);
+            filter: drop-shadow(0 0 5px var(--neon-cyan));
         }
 
         .progress-ring-bg {
             fill: none;
-            stroke: rgba(255,255,255,0.1);
-            stroke-width: 4;
+            stroke: rgba(255, 255, 255, 0.05);
+            stroke-width: 3;
         }
 
         .progress-ring-fill {
             fill: none;
-            stroke: var(--primary);
-            stroke-width: 4;
+            stroke: var(--neon-cyan);
+            stroke-width: 3;
             stroke-linecap: round;
-            transition: stroke-dashoffset 1s linear;
-            filter: drop-shadow(0 0 5px var(--primary));
+            transition: stroke-dashoffset 0.1s linear;
+            filter: drop-shadow(0 0 8px var(--neon-cyan));
         }
 
         .progress-text {
@@ -274,73 +375,91 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 2.5rem;
-            font-weight: 200;
+            font-family: var(--font-mono);
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            letter-spacing: 2px;
         }
 
-        /* 滚动条美化 */
-        .laps::-webkit-scrollbar {
-            width: 6px;
+        /* 计次列表 */
+        .laps {
+            max-height: 120px;
+            overflow-y: auto;
+            margin-top: 20px;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 10px;
         }
 
-        .laps::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.2);
-            border-radius: 3px;
+        .lap-item {
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            color: rgba(255, 255, 255, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-family: var(--font-mono);
         }
 
-        /* 响应式 */
-        @media (max-width: 600px) {
-            .time-main { font-size: 3rem; }
-            .info-bar { grid-template-columns: 1fr; gap: 10px; }
-            .glass-panel { padding: 25px; }
-            .progress-ring { width: 150px; height: 150px; }
-            .progress-text { font-size: 2rem; }
+        .lap-item span:first-child {
+            color: var(--neon-cyan);
+            opacity: 0.8;
         }
 
         /* 隐藏类 */
         .hidden { display: none !important; }
-        
-        /* 动画 */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+        /* 响应式 */
+        @media (max-width: 600px) {
+            .time-main { font-size: 3.5rem; letter-spacing: 4px; }
+            .glass-panel { padding: 30px 25px; border-radius: 20px; }
+            .info-grid { grid-template-columns: 1fr; gap: 15px; }
+            .info-item:not(:last-child)::after { display: none; }
+            .progress-ring { width: 180px; height: 180px; }
+            .progress-text { font-size: 2.5rem; }
         }
-        
-        .pulse { animation: pulse 2s infinite; }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.3); border-radius: 3px; }
     </style>
+<base target="_blank">
 </head>
 <body>
 
     <canvas id="starfield"></canvas>
+    <div class="warp-overlay"></div>
 
     <div class="container">
         <div class="glass-panel">
-            <!-- 模式切换 -->
+            <div class="panel-accent"></div>
+            
             <div class="tabs">
-                <div class="tab active" onclick="app.switchMode('clock')">时钟</div>
-                <div class="tab" onclick="app.switchMode('timer')">倒计时</div>
-                <div class="tab" onclick="app.switchMode('stopwatch')">秒表</div>
+                <div class="tab active" onclick="app.switchMode('clock')">Clock</div>
+                <div class="tab" onclick="app.switchMode('timer')">Timer</div>
+                <div class="tab" onclick="app.switchMode('stopwatch')">Stopwatch</div>
             </div>
 
             <!-- 时钟模式 -->
             <div id="mode-clock" class="mode-content">
                 <div class="display">
-                    <div class="time-main" id="clock-time">00:00:00</div>
-                    <div class="time-sub" id="clock-date">1月1日</div>
+                    <div class="time-main" id="clock-time">00<span class="colon">:</span>00<span class="colon">:</span>00</div>
+                    <div class="time-sub" id="clock-date">2026.01.30</div>
                 </div>
                 
-                <div class="info-bar">
+                <div class="info-grid">
                     <div class="info-item">
-                        <div class="info-label">星期</div>
-                        <div class="info-value" id="weekday">星期一</div>
+                        <div class="info-label">Week</div>
+                        <div class="info-value weekday" id="weekday">Friday</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">星座</div>
-                        <div class="info-value zodiac" id="zodiac">摩羯座</div>
+                        <div class="info-label">Zodiac</div>
+                        <div class="info-value zodiac" id="zodiac">Aquarius</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">年份</div>
-                        <div class="info-value" id="year">2026</div>
+                        <div class="info-label">Year</div>
+                        <div class="info-value" id="year-cn">农历腊月十一</div>
                     </div>
                 </div>
             </div>
@@ -350,26 +469,26 @@
                 <div class="setup" id="timer-setup">
                     <div class="input-group">
                         <input type="number" class="time-input" id="timer-h" placeholder="00" min="0" max="99">
-                        <span>:</span>
+                        <span class="input-separator">:</span>
                         <input type="number" class="time-input" id="timer-m" placeholder="00" min="0" max="59">
-                        <span>:</span>
+                        <span class="input-separator">:</span>
                         <input type="number" class="time-input" id="timer-s" placeholder="00" min="0" max="59">
                     </div>
-                    <button class="btn primary" onclick="timer.start()">开始倒计时</button>
+                    <button class="btn primary" onclick="timer.start()">Initiate</button>
                 </div>
 
                 <div class="running hidden" id="timer-running">
                     <div class="progress-ring">
-                        <svg width="200" height="200">
-                            <circle class="progress-ring-bg" cx="100" cy="100" r="90"></circle>
-                            <circle class="progress-ring-fill" id="timer-circle" cx="100" cy="100" r="90" 
-                                    stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
+                        <svg width="220" height="220" viewBox="0 0 220 220">
+                            <circle class="progress-ring-bg" cx="110" cy="110" r="100"></circle>
+                            <circle class="progress-ring-fill" id="timer-circle" cx="110" cy="110" r="100" 
+                                    stroke-dasharray="628.32" stroke-dashoffset="0"></circle>
                         </svg>
                         <div class="progress-text" id="timer-display">00:00:00</div>
                     </div>
                     <div class="controls">
-                        <button class="btn danger" onclick="timer.pause()">暂停</button>
-                        <button class="btn" onclick="timer.reset()">重置</button>
+                        <button class="btn danger" onclick="timer.toggle()">Pause</button>
+                        <button class="btn" onclick="timer.reset()">Abort</button>
                     </div>
                 </div>
             </div>
@@ -377,12 +496,12 @@
             <!-- 秒表模式 -->
             <div id="mode-stopwatch" class="mode-content hidden">
                 <div class="display">
-                    <div class="time-main" id="stopwatch-display">00:00.00</div>
+                    <div class="time-main" id="stopwatch-display" style="font-size: 4.5rem;">00<span class="colon">:</span>00<span class="colon">.</span>00</div>
                 </div>
                 <div class="controls">
-                    <button class="btn primary" id="sw-start" onclick="stopwatch.start()">开始</button>
-                    <button class="btn" id="sw-lap" onclick="stopwatch.lap()" disabled>计次</button>
-                    <button class="btn danger" onclick="stopwatch.reset()">重置</button>
+                    <button class="btn primary" id="sw-btn" onclick="stopwatch.toggle()">Start</button>
+                    <button class="btn" onclick="stopwatch.lap()" id="sw-lap" disabled>Mark</button>
+                    <button class="btn danger" onclick="stopwatch.reset()">Reset</button>
                 </div>
                 <div class="laps" id="sw-laps"></div>
             </div>
@@ -390,168 +509,310 @@
     </div>
 
     <script>
-        /* ========== 星空背景 ========== */
+        /* ========== 3D星际航行系统 ========== */
         const canvas = document.getElementById('starfield');
         const ctx = canvas.getContext('2d');
-        let width, height;
-        let stars = [];
-        let mouse = { x: null, y: null };
-
+        let width, height, centerX, centerY;
+        
+        // 飞船速度（可交互调整）
+        let speed = 2;
+        let warpSpeed = false;
+        
         function resize() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
+            centerX = width / 2;
+            centerY = height / 2;
         }
 
-        class Star {
+        // 3D星星类 - 向屏幕飞来
+        class Star3D {
             constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.z = Math.random() * 2; // 深度
-                this.size = Math.random() * 1.5;
-                this.speedX = (Math.random() - 0.5) * 0.2;
-                this.speedY = (Math.random() - 0.5) * 0.2;
+                this.init(true);
+            }
+
+            init(randomZ = false) {
+                // x,y 在 -width 到 width 之间随机
+                this.x = (Math.random() - 0.5) * width * 2;
+                this.y = (Math.random() - 0.5) * height * 2;
+                // z 深度，随机分布或从远处开始
+                this.z = randomZ ? Math.random() * 2000 : 2000;
+                this.pz = this.z; // 上一个z位置（用于拖尾）
+                
+                this.size = Math.random() * 2;
+                this.color = Math.random() > 0.9 ? '#00f3ff' : (Math.random() > 0.8 ? '#ff00ff' : '#ffffff');
                 this.brightness = Math.random();
-                this.twinkleSpeed = 0.02 + Math.random() * 0.03;
             }
 
             update() {
-                // 流动效果
-                this.x += this.speedX;
-                this.y += this.speedY;
-
-                // 鼠标互动（轻微排斥）
-                if (mouse.x != null) {
-                    const dx = mouse.x - this.x;
-                    const dy = mouse.y - this.y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    if (dist < 100) {
-                        this.x -= dx * 0.01;
-                        this.y -= dy * 0.01;
-                    }
-                }
-
-                // 边界循环
-                if (this.x < 0) this.x = width;
-                if (this.x > width) this.x = 0;
-                if (this.y < 0) this.y = height;
-                if (this.y > height) this.y = 0;
-
-                // 闪烁
-                this.brightness += this.twinkleSpeed;
-                if (this.brightness > 1 || this.brightness < 0.3) {
-                    this.twinkleSpeed = -this.twinkleSpeed;
+                // 向屏幕飞来（z减小）
+                const currentSpeed = warpSpeed ? speed * 8 : speed;
+                this.z -= currentSpeed;
+                
+                // 如果到达屏幕前，重置到远处
+                if (this.z <= 0) {
+                    this.init();
+                    this.pz = this.z;
+                } else {
+                    this.pz = this.z + currentSpeed;
                 }
             }
 
             draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size * (0.8 + this.z * 0.4), 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.brightness})`;
-                ctx.fill();
-            }
-        }
-
-        function initStars() {
-            stars = [];
-            for (let i = 0; i < 80; i++) {
-                stars.push(new Star());
-            }
-        }
-
-        function drawLines() {
-            // 连线效果
-            for (let i = 0; i < stars.length; i++) {
-                for (let j = i + 1; j < stars.length; j++) {
-                    const dx = stars[i].x - stars[j].x;
-                    const dy = stars[i].y - stars[j].y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
+                // 3D投影到2D屏幕
+                const x2d = centerX + (this.x / this.z) * 1000;
+                const y2d = centerY + (this.y / this.z) * 1000;
+                
+                // 上一个位置（用于绘制拖尾）
+                const px2d = centerX + (this.x / this.pz) * 1000;
+                const py2d = centerY + (this.y / this.pz) * 1000;
+                
+                // 大小根据距离变化
+                const size = Math.max(0.1, (2000 - this.z) / 1000 * this.size);
+                
+                // 透明度根据距离
+                const alpha = Math.min(1, (2000 - this.z) / 1000);
+                
+                // 绘制拖尾（ warp 效果）
+                if (warpSpeed || (Math.abs(px2d - x2d) > 5 || Math.abs(py2d - y2d) > 5)) {
+                    const gradient = ctx.createLinearGradient(px2d, py2d, x2d, y2d);
+                    gradient.addColorStop(0, `rgba(${this.hexToRgb(this.color)}, 0)`);
+                    gradient.addColorStop(1, `rgba(${this.hexToRgb(this.color)}, ${alpha})`);
                     
-                    if (dist < 100) {
-                        ctx.beginPath();
-                        ctx.moveTo(stars[i].x, stars[i].y);
-                        ctx.lineTo(stars[j].x, stars[j].y);
-                        ctx.strokeStyle = `rgba(0, 240, 255, ${0.1 * (1 - dist/100)})`;
-                        ctx.stroke();
-                    }
+                    ctx.beginPath();
+                    ctx.moveTo(px2d, py2d);
+                    ctx.lineTo(x2d, y2d);
+                    ctx.strokeStyle = gradient;
+                    ctx.lineWidth = size;
+                    ctx.stroke();
                 }
+                
+                // 绘制星星本体
+                ctx.beginPath();
+                ctx.arc(x2d, y2d, size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${this.hexToRgb(this.color)}, ${alpha})`;
+                ctx.fill();
+                
+                // 发光效果
+                if (this.z < 500) {
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = this.color;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            }
+
+            hexToRgb(hex) {
+                const r = parseInt(hex.slice(1, 3), 16);
+                const g = parseInt(hex.slice(3, 5), 16);
+                const b = parseInt(hex.slice(5, 7), 16);
+                return `${r},${g},${b}`;
+            }
+        }
+
+        // 流星类
+        class ShootingStar {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height * 0.5; // 上半部分出现
+                this.length = Math.random() * 80 + 50;
+                this.speed = Math.random() * 10 + 15;
+                this.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.2; // 45度左右
+                this.life = 1;
+                this.decay = 0.02;
+                this.active = false;
+                // 随机延迟激活
+                setTimeout(() => this.active = true, Math.random() * 5000);
+            }
+
+            update() {
+                if (!this.active) return;
+                
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed;
+                this.life -= this.decay;
+                
+                if (this.life <= 0 || this.x > width || this.y > height) {
+                    this.reset();
+                    this.active = false;
+                    setTimeout(() => this.active = true, Math.random() * 8000 + 3000);
+                }
+            }
+
+            draw() {
+                if (!this.active) return;
+                
+                const tailX = this.x - Math.cos(this.angle) * this.length;
+                const tailY = this.y - Math.sin(this.angle) * this.length;
+                
+                const gradient = ctx.createLinearGradient(this.x, this.y, tailX, tailY);
+                gradient.addColorStop(0, `rgba(255, 255, 255, ${this.life})`);
+                gradient.addColorStop(0.1, `rgba(0, 243, 255, ${this.life * 0.8})`);
+                gradient.addColorStop(1, `rgba(0, 243, 255, 0)`);
+                
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(tailX, tailY);
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+                
+                // 头部光点
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.life})`;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#00f3ff';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        const stars = [];
+        const shootingStars = [];
+        const STAR_COUNT = 400; // 更多星星
+
+        function init() {
+            resize();
+            for (let i = 0; i < STAR_COUNT; i++) {
+                stars.push(new Star3D());
+            }
+            // 3颗流星
+            for (let i = 0; i < 3; i++) {
+                shootingStars.push(new ShootingStar());
             }
         }
 
         function animate() {
-            ctx.clearRect(0, 0, width, height);
+            // 拖尾效果（半透明清除）
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.fillRect(0, 0, width, height);
             
             stars.forEach(star => {
                 star.update();
                 star.draw();
             });
             
-            drawLines();
+            shootingStars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+            
             requestAnimationFrame(animate);
         }
 
         window.addEventListener('resize', resize);
+        
+        // 鼠标交互 - 鼠标位置影响飞行方向（视差效果）
         window.addEventListener('mousemove', (e) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
+            const x = (e.clientX - centerX) / centerX;
+            const y = (e.clientY - centerY) / centerY;
+            
+            // 微妙的方向偏移
+            stars.forEach(star => {
+                star.x -= x * 2;
+                star.y -= y * 2;
+            });
         });
 
-        resize();
-        initStars();
+        // 点击加速（曲速航行）
+        window.addEventListener('mousedown', () => warpSpeed = true);
+        window.addEventListener('mouseup', () => warpSpeed = false);
+        window.addEventListener('touchstart', () => warpSpeed = true);
+        window.addEventListener('touchend', () => warpSpeed = false);
+
+        init();
         animate();
+
+        /* ========== 农历计算 ========== */
+        function getLunarDate(date) {
+            const lunarMonths = ['正', '二', '三', '四', '五', '六', '七', '八', '九', '十', '冬', '腊'];
+            const lunarDays = ['初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十',
+                '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十',
+                '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十'];
+            
+            // 简化的农历计算（2025-2026年近似值）
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const day = date.getDate();
+            
+            // 2025年春节是1月29日，2026年春节是2月17日
+            let lunarYear, lunarMonth, lunarDay;
+            
+            if (year === 2025) {
+                if (month === 0 && day < 29) { // 1月1日-28日还是甲辰年腊月
+                    lunarYear = '甲辰';
+                    lunarMonth = 11; // 腊月
+                    lunarDay = day + 3; // 近似偏移
+                } else {
+                    lunarYear = '乙巳';
+                    const daysSinceSpring = (month === 0 ? day - 29 : 31 - 29 + day + (month > 1 ? 28 : 0) + [0,31,59,90,120,151,181,212,243,273,304,334][month - 1]);
+                    // 简化的月份计算
+                    lunarMonth = Math.floor(daysSinceSpring / 29.5) % 12;
+                    lunarDay = Math.floor(daysSinceSpring % 29.5) + 1;
+                }
+            } else { // 2026
+                if (month === 0 || (month === 1 && day < 17)) {
+                    lunarYear = '乙巳';
+                    const daysSinceJan1 = month === 0 ? day : 31 + day;
+                    const daysSinceSpring2025 = 365 - 29 + 1 + daysSinceJan1; // 从2025春节算起
+                    lunarMonth = Math.floor(daysSinceSpring2025 / 29.5) % 12;
+                    lunarDay = Math.floor(daysSinceSpring2025 % 29.5) + 1;
+                } else {
+                    lunarYear = '丙午';
+                    lunarMonth = 0;
+                    lunarDay = day - 16;
+                }
+            }
+            
+            if (lunarDay >= 30) lunarDay = 29;
+            return `农历${lunarMonths[lunarMonth]}月${lunarDays[lunarDay - 1]}`;
+        }
 
         /* ========== 星座计算 ========== */
         function getZodiac(month, day) {
-            const zodiacs = [
-                { name: "摩羯座", start: [12, 22], end: [1, 19] },
-                { name: "水瓶座", start: [1, 20], end: [2, 18] },
-                { name: "双鱼座", start: [2, 19], end: [3, 20] },
-                { name: "白羊座", start: [3, 21], end: [4, 19] },
-                { name: "金牛座", start: [4, 20], end: [5, 20] },
-                { name: "双子座", start: [5, 21], end: [6, 21] },
-                { name: "巨蟹座", start: [6, 22], end: [7, 22] },
-                { name: "狮子座", start: [7, 23], end: [8, 22] },
-                { name: "处女座", start: [8, 23], end: [9, 22] },
-                { name: "天秤座", start: [9, 23], end: [10, 23] },
-                { name: "天蝎座", start: [10, 24], end: [11, 22] },
-                { name: "射手座", start: [11, 23], end: [12, 21] }
-            ];
-
-            for (let z of zodiacs) {
-                const [sMonth, sDay] = z.start;
-                const [eMonth, eDay] = z.end;
-                
-                if (sMonth === 12 && month === 12 && day >= sDay) return z.name;
-                if (eMonth === 1 && month === 1 && day <= eDay) return z.name;
-                if (month === sMonth && day >= sDay) return z.name;
-                if (month === eMonth && day <= eDay) return z.name;
+            const dates = [20, 19, 21, 20, 21, 22, 23, 23, 23, 24, 23, 22];
+            const signs = ['水瓶座', '双鱼座', '白羊座', '金牛座', '双子座', '巨蟹座', 
+                '狮子座', '处女座', '天秤座', '天蝎座', '射手座', '摩羯座'];
+            
+            if (day < dates[month]) {
+                return signs[month];
+            } else {
+                return signs[(month + 1) % 12];
             }
-            return "摩羯座";
         }
 
-        /* ========== 时钟模式 ========== */
+        /* ========== 时钟 ========== */
         function updateClock() {
             const now = new Date();
             
-            // 时间
+            // 主时间 - 带闪烁冒号
             const h = String(now.getHours()).padStart(2, '0');
             const m = String(now.getMinutes()).padStart(2, '0');
             const s = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('clock-time').textContent = `${h}:${m}:${s}`;
+            document.getElementById('clock-time').innerHTML = 
+                `${h}<span class="colon">:</span>${m}<span class="colon">:</span>${s}`;
             
-            // 日期
-            const month = now.getMonth() + 1;
-            const day = now.getDate();
-            document.getElementById('clock-date').textContent = `${month}月${day}日`;
+            // 日期格式：2026.01.30
+            const y = now.getFullYear();
+            const mo = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            document.getElementById('clock-date').textContent = `${y}.${mo}.${d}`;
             
-            // 星期
-            const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-            document.getElementById('weekday').textContent = weekdays[now.getDay()];
+            // 星期 - 英文简洁
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            document.getElementById('weekday').textContent = days[now.getDay()];
+            
+            // 农历
+            document.getElementById('year-cn').textContent = getLunarDate(now);
             
             // 星座
-            document.getElementById('zodiac').textContent = getZodiac(month, day);
-            
-            // 年份
-            document.getElementById('year').textContent = now.getFullYear();
+            document.getElementById('zodiac').textContent = getZodiac(now.getMonth(), now.getDate());
         }
 
         setInterval(updateClock, 1000);
@@ -562,7 +823,7 @@
             totalSeconds: 0,
             remaining: 0,
             interval: null,
-            isPaused: false,
+            isRunning: false,
             
             start() {
                 const h = parseInt(document.getElementById('timer-h').value) || 0;
@@ -573,75 +834,63 @@
                 if (this.totalSeconds <= 0) return;
                 
                 this.remaining = this.totalSeconds;
-                this.isPaused = false;
+                this.isRunning = true;
                 
                 document.getElementById('timer-setup').classList.add('hidden');
                 document.getElementById('timer-running').classList.remove('hidden');
                 
-                this.tick();
+                this.update();
                 this.interval = setInterval(() => this.tick(), 1000);
             },
             
             tick() {
-                if (this.isPaused) return;
-                
+                if (!this.isRunning) return;
                 this.remaining--;
-                this.updateDisplay();
-                
-                // 更新进度环
-                const circle = document.getElementById('timer-circle');
-                const circumference = 2 * Math.PI * 90; // r=90
-                const offset = circumference * (1 - this.remaining / this.totalSeconds);
-                circle.style.strokeDashoffset = offset;
+                this.update();
                 
                 if (this.remaining <= 0) {
                     this.complete();
                 }
             },
             
-            updateDisplay() {
+            update() {
                 const h = Math.floor(this.remaining / 3600);
                 const m = Math.floor((this.remaining % 3600) / 60);
                 const s = this.remaining % 60;
                 
                 const display = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
                 document.getElementById('timer-display').textContent = display;
+                
+                // 更新圆环
+                const circle = document.getElementById('timer-circle');
+                const circumference = 2 * Math.PI * 100;
+                const offset = circumference * (1 - this.remaining / this.totalSeconds);
+                circle.style.strokeDashoffset = offset;
             },
             
-            pause() {
-                this.isPaused = !this.isPaused;
-                event.target.textContent = this.isPaused ? '继续' : '暂停';
+            toggle() {
+                this.isRunning = !this.isRunning;
+                event.target.textContent = this.isRunning ? 'Pause' : 'Resume';
             },
             
             reset() {
                 clearInterval(this.interval);
+                this.isRunning = false;
                 document.getElementById('timer-setup').classList.remove('hidden');
                 document.getElementById('timer-running').classList.add('hidden');
-                document.getElementById('timer-h').value = '';
-                document.getElementById('timer-m').value = '';
-                document.getElementById('timer-s').value = '';
-                document.querySelector('#timer-running button').textContent = '暂停';
-                this.isPaused = false;
+                document.querySelectorAll('.time-input').forEach(i => i.value = '');
+                document.querySelector('#timer-running .btn').textContent = 'Pause';
             },
             
             complete() {
                 clearInterval(this.interval);
-                document.getElementById('timer-display').textContent = "时间到";
-                document.getElementById('timer-display').classList.add('pulse');
+                document.getElementById('timer-display').textContent = 'COMPLETED';
+                document.getElementById('timer-display').style.color = '#ff00ff';
                 
-                // 播放提示音（简单的beep）
-                const audio = new AudioContext();
-                const oscillator = audio.createOscillator();
-                const gain = audio.createGain();
-                oscillator.connect(gain);
-                gain.connect(audio.destination);
-                oscillator.frequency.value = 800;
-                gain.gain.setValueAtTime(0.3, audio.currentTime);
-                oscillator.start();
-                setTimeout(() => oscillator.stop(), 200);
-                
+                // 视觉反馈
                 setTimeout(() => {
-                    document.getElementById('timer-display').classList.remove('pulse');
+                    document.getElementById('timer-display').style.color = '';
+                    this.reset();
                 }, 3000);
             }
         };
@@ -654,24 +903,30 @@
             running: false,
             laps: [],
             
-            start() {
+            toggle() {
                 if (!this.running) {
-                    this.startTime = Date.now() - this.elapsed;
-                    this.interval = setInterval(() => this.update(), 10);
-                    this.running = true;
-                    document.getElementById('sw-start').textContent = '停止';
-                    document.getElementById('sw-start').classList.add('danger');
-                    document.getElementById('sw-lap').disabled = false;
+                    this.start();
                 } else {
                     this.stop();
                 }
             },
             
+            start() {
+                this.startTime = Date.now() - this.elapsed;
+                this.interval = setInterval(() => this.update(), 10);
+                this.running = true;
+                document.getElementById('sw-btn').textContent = 'Stop';
+                document.getElementById('sw-btn').classList.add('danger');
+                document.getElementById('sw-btn').classList.remove('primary');
+                document.getElementById('sw-lap').disabled = false;
+            },
+            
             stop() {
                 clearInterval(this.interval);
                 this.running = false;
-                document.getElementById('sw-start').textContent = '开始';
-                document.getElementById('sw-start').classList.remove('danger');
+                document.getElementById('sw-btn').textContent = 'Start';
+                document.getElementById('sw-btn').classList.remove('danger');
+                document.getElementById('sw-btn').classList.add('primary');
                 document.getElementById('sw-lap').disabled = true;
             },
             
@@ -685,23 +940,17 @@
                 const s = Math.floor((this.elapsed / 1000) % 60);
                 const m = Math.floor((this.elapsed / (1000 * 60)) % 60);
                 
-                const display = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(ms).padStart(2, '0')}`;
-                document.getElementById('stopwatch-display').textContent = display;
+                const display = `${String(m).padStart(2, '0')}<span class="colon">:</span>${String(s).padStart(2, '0')}<span class="colon">.</span>${String(ms).padStart(2, '0')}`;
+                document.getElementById('stopwatch-display').innerHTML = display;
             },
             
             lap() {
                 const lapNum = this.laps.length + 1;
-                const lapTime = this.elapsed;
-                const lastLap = this.laps.length > 0 ? this.laps[this.laps.length - 1].raw : 0;
-                const split = lapTime - lastLap;
+                const current = this.elapsed;
+                const last = this.laps.length > 0 ? this.laps[this.laps.length - 1].raw : 0;
+                const split = current - last;
                 
-                this.laps.push({ num: lapNum, raw: lapTime, split: split });
-                this.renderLaps();
-            },
-            
-            renderLaps() {
-                const container = document.getElementById('sw-laps');
-                const lap = this.laps[this.laps.length - 1];
+                this.laps.push({ num: lapNum, raw: current, split: split });
                 
                 const format = (ms) => {
                     const m = Math.floor(ms / 60000);
@@ -712,19 +961,15 @@
                 
                 const div = document.createElement('div');
                 div.className = 'lap-item';
-                div.innerHTML = `
-                    <span>计次 ${lap.num}</span>
-                    <span>+${format(lap.split)} &nbsp; ${format(lap.raw)}</span>
-                `;
-                
-                container.insertBefore(div, container.firstChild);
+                div.innerHTML = `<span>#${lapNum}</span><span>+${format(split)} &nbsp; ${format(current)}</span>`;
+                document.getElementById('sw-laps').insertBefore(div, document.getElementById('sw-laps').firstChild);
             },
             
             reset() {
                 this.stop();
                 this.elapsed = 0;
-                this.display();
                 this.laps = [];
+                this.display();
                 document.getElementById('sw-laps').innerHTML = '';
             }
         };
@@ -732,18 +977,11 @@
         /* ========== 模式切换 ========== */
         const app = {
             switchMode(mode) {
-                // 更新标签
-                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 event.target.classList.add('active');
                 
-                // 更新内容
                 document.querySelectorAll('.mode-content').forEach(el => el.classList.add('hidden'));
                 document.getElementById(`mode-${mode}`).classList.remove('hidden');
-                
-                // 特殊处理
-                if (mode === 'clock') {
-                    updateClock();
-                }
             }
         };
     </script>
